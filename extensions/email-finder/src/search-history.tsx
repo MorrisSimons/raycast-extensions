@@ -61,7 +61,6 @@ function HistoryResultView({ entry }: { entry: SearchHistoryEntry }) {
         error={entry.error ?? "Unknown error"}
         searchParams={searchParams}
         onBack={() => {}}
-        hasArguments={true}
       />
     );
   }
@@ -75,7 +74,6 @@ function HistoryResultView({ entry }: { entry: SearchHistoryEntry }) {
         error={undefined}
         searchParams={searchParams}
         onBack={() => {}}
-        hasArguments={true}
       />
     );
   }
