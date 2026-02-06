@@ -1,5 +1,5 @@
 import { Action, ActionPanel, Form, Icon, LaunchProps, List, showToast, Toast, useNavigation } from "@raycast/api";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { EnrichedData, ResultsView } from "./email-finder";
 import { AuthGate } from "./auth";
 import { searchPerson, enrichPerson, SearchPersonResponse, EnrichPersonResponse } from "./backend";
@@ -488,9 +488,16 @@ function EnrichedEmployeeView({
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | undefined>(undefined);
   const [credits, setCredits] = useState<number | null>(initialCredits);
+  const hasStartedRef = useRef(false);
 
   // * Fetch enriched data on mount
   useEffect(() => {
+    // Prevent duplicate requests from React Strict Mode double-mounting
+    if (hasStartedRef.current) return;
+    hasStartedRef.current = true;
+
+    let cancelled = false;
+
     async function fetchEnrichedData() {
       showToast({
         style: Toast.Style.Animated,
@@ -500,6 +507,8 @@ function EnrichedEmployeeView({
 
       try {
         const response = await enrichPerson(employee.firstName, employee.lastName, domain);
+
+        if (cancelled) return;
 
         if (typeof response.balance === "number") {
           setCredits(response.balance);
@@ -524,6 +533,8 @@ function EnrichedEmployeeView({
 
         showToast({ style: Toast.Style.Success, title: "Found", message: mappedData.person.email.email });
       } catch (err) {
+        if (cancelled) return;
+
         const message = err instanceof Error ? err.message : "Unknown error";
         setError(message);
 
@@ -541,11 +552,17 @@ function EnrichedEmployeeView({
           .then(setCredits)
           .catch(() => {});
       } finally {
-        setIsLoading(false);
+        if (!cancelled) {
+          setIsLoading(false);
+        }
       }
     }
 
     fetchEnrichedData();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (

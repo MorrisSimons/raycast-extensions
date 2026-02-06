@@ -25,13 +25,13 @@
       "arguments": [
         {
           "name": "firstName",
-          "placeholder": "John",
+          "placeholder": "first",
           "type": "text",
           "required": false
         },
         {
           "name": "lastName",
-          "placeholder": "Doe",
+          "placeholder": "lastname",
           "type": "text",
           "required": false
         },

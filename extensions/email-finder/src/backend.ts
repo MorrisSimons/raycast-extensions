@@ -5,7 +5,7 @@ interface Preferences {
   apiKey: string;
 }
 
-// * Prospeo response types (matching existing types in email-finder.tsx)
+// * Response types (matching existing types in email-finder.tsx)
 interface JobHistory {
   title: string;
   company_name: string;

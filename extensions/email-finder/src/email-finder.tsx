@@ -1,6 +1,6 @@
 import { Action, ActionPanel, Detail, Form, Icon, LaunchProps, showToast, Toast, useNavigation } from "@raycast/api";
 import { getFavicon } from "@raycast/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { addSearchHistoryEntry } from "./history-storage";
 import { AuthGate } from "./auth";
 import { enrichPerson, EnrichPersonResponse } from "./backend";
@@ -94,14 +94,14 @@ export interface EnrichedData {
 }
 
 // * Markdown image helpers
-const PROSPEO_LOGO_BASE = "https://prospeo-static-assets.s3.us-east-1.amazonaws.com/company_logo/";
+const COMPANY_LOGO_BASE = "https://prospeo-static-assets.s3.us-east-1.amazonaws.com/company_logo/";
 
 function resolveLogoUrl(logo: string | undefined | null): string | undefined {
   if (!logo) return undefined;
   // If already a full URL, return as-is
   if (logo.startsWith("http://") || logo.startsWith("https://")) return logo;
   // Otherwise, it's a filename - prefix with S3 base
-  return `${PROSPEO_LOGO_BASE}${logo}`;
+  return `${COMPANY_LOGO_BASE}${logo}`;
 }
 
 function withRaycastImageSize(url: string, w: number, h: number): string {
@@ -261,14 +261,16 @@ export function EmailFormView({
 
   // * Auto-submit if all arguments provided
   const hasAllArguments = initialFirstName && initialLastName && initialDomain;
-  const [hasAutoSubmitted, setHasAutoSubmitted] = useState(false);
+  const hasAutoSubmittedRef = useRef(false);
 
   useEffect(() => {
-    if (hasAllArguments && !hasAutoSubmitted) {
-      setHasAutoSubmitted(true);
+    // Prevent duplicate requests from React Strict Mode double-mounting
+    if (hasAutoSubmittedRef.current) return;
+    if (hasAllArguments) {
+      hasAutoSubmittedRef.current = true;
       handleSubmit({ firstName: initialFirstName, lastName: initialLastName, domain: initialDomain });
     }
-  }, [hasAllArguments, hasAutoSubmitted]);
+  }, [hasAllArguments]);
 
   async function handleSubmit(values: { firstName: string; lastName: string; domain: string }) {
     const { firstName, lastName, domain } = values;
@@ -350,14 +352,14 @@ export function EmailFormView({
       <Form.TextField
         id="firstName"
         title="First Name"
-        placeholder="John"
+        placeholder="first"
         defaultValue={initialFirstName}
         autoFocus={autoFocusField === "firstName"}
       />
       <Form.TextField
         id="lastName"
         title="Last Name"
-        placeholder="Doe"
+        placeholder="lastname"
         defaultValue={initialLastName}
         autoFocus={autoFocusField === "lastName"}
       />
