@@ -1,10 +1,6 @@
 import { getPreferenceValues } from "@raycast/api";
 import { SUPABASE_URL } from "./supabase";
 
-interface Preferences {
-  apiKey: string;
-}
-
 // * Response types (matching existing types in email-finder.tsx)
 interface JobHistory {
   title: string;
@@ -152,7 +148,7 @@ export function isInsufficientCreditsError(data: unknown): data is InsufficientC
 
 // * Get API key from preferences
 function getApiKey(): string {
-  const { apiKey } = getPreferenceValues<Preferences>();
+  const { apiKey } = getPreferenceValues();
   if (!apiKey?.trim()) {
     throw new Error("API key not configured");
   }

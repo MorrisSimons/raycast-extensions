@@ -1,12 +1,8 @@
 import { Action, ActionPanel, Detail, getPreferenceValues, openExtensionPreferences } from "@raycast/api";
 
-interface Preferences {
-  apiKey: string;
-}
-
 // * Auth Gate - wraps content and checks if API key is configured
 export function AuthGate({ children }: { children: (signOut: () => Promise<void>) => React.ReactNode }) {
-  const { apiKey } = getPreferenceValues<Preferences>();
+  const { apiKey } = getPreferenceValues();
 
   async function signOut() {
     await openExtensionPreferences();

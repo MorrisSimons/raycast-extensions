@@ -1,10 +1,6 @@
 import { getPreferenceValues } from "@raycast/api";
 import { SUPABASE_URL } from "./supabase";
 
-interface Preferences {
-  apiKey: string;
-}
-
 // * Types
 interface CreditsResponse {
   balance: number;
@@ -19,7 +15,7 @@ interface ErrorResponse {
 
 // * Fetch user's current credit balance
 export async function fetchCredits(): Promise<number> {
-  const { apiKey } = getPreferenceValues<Preferences>();
+  const { apiKey } = getPreferenceValues();
   if (!apiKey?.trim()) {
     throw new Error("API key not configured");
   }

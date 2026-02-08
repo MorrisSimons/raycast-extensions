@@ -3,7 +3,7 @@
   "name": "email-finder",
   "title": "Email Finder",
   "description": "Find the verified email address of any professional.",
-  "icon": "extension-icon-2.png",
+  "icon": "extension-icon.png",
   "author": "morrissimons",
   "platforms": [
     "macOS",

@@ -41,7 +41,11 @@ function formatRelativeTime(isoString: string): string {
   if (diffMins < 60) return `${diffMins}m ago`;
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString();
+  // Format as MM/DD/YYYY (US English locale-stable)
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${month}/${day}/${year}`;
 }
 
 // * Cached result view from history
@@ -328,7 +332,18 @@ export default function Command() {
             subtitle={`${entry.domain}${entry.employees ? ` · ${entry.employees.length} employees` : ""}`}
             icon={entry.logoUrl ? { source: entry.logoUrl, fallback: Icon.Building } : Icon.Building}
             accessories={[
-              { text: formatRelativeTime(entry.createdAt), tooltip: new Date(entry.createdAt).toLocaleString() },
+              {
+                text: formatRelativeTime(entry.createdAt),
+                tooltip: (() => {
+                  const date = new Date(entry.createdAt);
+                  const month = String(date.getMonth() + 1).padStart(2, "0");
+                  const day = String(date.getDate()).padStart(2, "0");
+                  const year = date.getFullYear();
+                  const hours = String(date.getHours()).padStart(2, "0");
+                  const minutes = String(date.getMinutes()).padStart(2, "0");
+                  return `${month}/${day}/${year} ${hours}:${minutes}`;
+                })(),
+              },
             ]}
             actions={
               <ActionPanel>
@@ -385,7 +400,18 @@ export default function Command() {
               entry.email
                 ? { text: entry.email, icon: Icon.Envelope }
                 : { text: entry.error ?? "Failed", icon: Icon.ExclamationMark },
-              { text: formatRelativeTime(entry.createdAt), tooltip: new Date(entry.createdAt).toLocaleString() },
+              {
+                text: formatRelativeTime(entry.createdAt),
+                tooltip: (() => {
+                  const date = new Date(entry.createdAt);
+                  const month = String(date.getMonth() + 1).padStart(2, "0");
+                  const day = String(date.getDate()).padStart(2, "0");
+                  const year = date.getFullYear();
+                  const hours = String(date.getHours()).padStart(2, "0");
+                  const minutes = String(date.getMinutes()).padStart(2, "0");
+                  return `${month}/${day}/${year} ${hours}:${minutes}`;
+                })(),
+              },
             ]}
             actions={
               <ActionPanel>
